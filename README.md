@@ -42,7 +42,6 @@ Weibo：
 - Source repository：wangzhuang1911/Weibo-dataset
 - Citation：Jin, Z., Cao, J., Guo, H., Zhang, Y., & Luo, J. (2017). Multimodal Fusion with Recurrent Neural Networks for Rumor Detection on Microblogs. ACM Multimedia 2017, 795-816.
 
-`最终的含噪...` 目录不作为主实验输入。
 
 ## 代码文件说明
 
