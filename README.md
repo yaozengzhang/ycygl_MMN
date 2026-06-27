@@ -42,7 +42,7 @@ Weibo：
 - Source repository：wangzhuang1911/Weibo-dataset
 - Citation：Jin, Z., Cao, J., Guo, H., Zhang, Y., & Luo, J. (2017). Multimodal Fusion with Recurrent Neural Networks for Rumor Detection on Microblogs. ACM Multimedia 2017, 795-816.
 
-实际使用的数据可能和清洗过程有关，数量可能存在差异
+实际使用的数据可能和清洗过程有关，数量可能存在差异。
 ## 代码文件说明
 
 - `run_pipeline.py`：主流程脚本。读取数据配置，生成 `split.tsv`，按 `gcn`、`image`、`train` 三个阶段执行，也支持 `all` 一次跑完。
