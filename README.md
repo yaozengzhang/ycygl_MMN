@@ -5,7 +5,7 @@
 ## 项目结构
 
 ```text
-E:\task1\gcn_ycygl_pipeline
+ycygl_MMN
 ├── README.md
 ├── requirements.txt
 ├── run_pipeline.py
@@ -69,14 +69,28 @@ GCN200 + 原图1024 + ELA1024 -> 三特征融合检测
 
 ## 数据准备
 
-代码默认读取下面四个位置。如果你的数据放在其他地方，先修改 `gcn_ycygl_pipeline\config.py` 里的 `DATA_ROOT` 或对应 `sample_dir`、`image_dir`。
+代码默认从 `data/raw` 读取数据，也可以通过环境变量 `YCYGL_DATA_ROOT` 指定数据根目录。推荐整理成下面的相对结构：
 
 ```text
-微博文本样本：F:\原电脑深度学习相关\多模态谣言检测数据\微博\ALL_textimage
-微博原图图片：F:\原电脑深度学习相关\多模态谣言检测数据\微博\ALL_pic
+data/raw/
+├── weibo/
+│   ├── text/
+│   └── images/
+└── twitter/
+    ├── text/
+    └── images/
+```
 
-推特文本样本：F:\原电脑深度学习相关\多模态谣言检测数据\推特\new_twitter_list
-推特原图图片：F:\原电脑深度学习相关\多模态谣言检测数据\推特\ALLPIL
+如果不使用默认目录，在 PowerShell 中先设置数据根目录：
+
+```powershell
+$env:YCYGL_DATA_ROOT = "你的数据根目录"
+```
+
+输出目录默认是 `runs`，也可以用 `YCYGL_WORK_DIR` 修改：
+
+```powershell
+$env:YCYGL_WORK_DIR = "你的输出目录"
 ```
 
 样本文件需要能解析出：
@@ -96,7 +110,7 @@ split
 先进入项目目录并安装依赖：
 
 ```powershell
-cd E:\task1\gcn_ycygl_pipeline
+cd ycygl_MMN
 pip install -r requirements.txt
 ```
 
@@ -156,8 +170,8 @@ python .\run_pipeline.py --dataset weibo --use_wandb --wandb_project gcn_ycygl_t
 输出默认在：
 
 ```text
-E:\task1\gcn_ycygl_pipeline\runs\weibo
-E:\task1\gcn_ycygl_pipeline\runs\twitter
+runs\weibo
+runs\twitter
 ```
 
 关键输出：

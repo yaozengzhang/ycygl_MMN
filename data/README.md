@@ -20,11 +20,16 @@
 
 ## 复现数据放置
 
-训练代码需要文本样本和原图图片。默认路径在 `gcn_ycygl_pipeline\config.py` 中配置；如果复现环境路径不同，修改该文件中的 `DATASETS` 即可。
+训练代码需要文本样本和原图图片。默认读取 `data/raw`，也可以通过环境变量 `YCYGL_DATA_ROOT` 指定数据根目录。
 
 ```text
-sample_dir: 文本样本目录
-image_dir: 原图图片目录
+data/raw/
+├── weibo/
+│   ├── text/
+│   └── images/
+└── twitter/
+    ├── text/
+    └── images/
 ```
 
 完整图片和生成的 `.pt` 特征通常体积较大，建议不要直接作为普通 Git 文件提交。

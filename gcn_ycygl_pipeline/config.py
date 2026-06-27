@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
 
-DATA_ROOT = Path(r"F:\原电脑深度学习相关\多模态谣言检测数据")
+DATA_ROOT = Path(os.environ.get("YCYGL_DATA_ROOT", "data/raw"))
 
 
 @dataclass(frozen=True)
@@ -17,18 +18,18 @@ class DatasetPaths:
 DATASETS = {
     "weibo": DatasetPaths(
         name="weibo",
-        sample_dir=DATA_ROOT / "微博" / "ALL_textimage",
-        image_dir=DATA_ROOT / "微博" / "ALL_pic",
+        sample_dir=DATA_ROOT / "weibo" / "text",
+        image_dir=DATA_ROOT / "weibo" / "images",
     ),
     "twitter": DatasetPaths(
         name="twitter",
-        sample_dir=DATA_ROOT / "推特" / "new_twitter_list",
-        image_dir=DATA_ROOT / "推特" / "ALLPIL",
+        sample_dir=DATA_ROOT / "twitter" / "text",
+        image_dir=DATA_ROOT / "twitter" / "images",
     ),
 }
 
 
-DEFAULT_WORK_DIR = Path(r"E:\task1\gcn_ycygl_pipeline\runs")
+DEFAULT_WORK_DIR = Path(os.environ.get("YCYGL_WORK_DIR", "runs"))
 
 
 @dataclass
@@ -37,4 +38,3 @@ class WandbConfig:
     project: str = "gcn_ycygl_three_feature"
     entity: str | None = None
     run_name: str | None = None
-
