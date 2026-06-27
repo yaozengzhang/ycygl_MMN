@@ -4,11 +4,11 @@
 
 ## Twitter
 
-- Dataset: MediaEval 2015 Verifying Multimedia Use
-- GitHub: https://github.com/MKLab-ITI/image-verification-corpus/tree/master/mediaeval2015
+- Dataset: MediaEval 2016 Verifying Multimedia Use
+- GitHub: https://github.com/MKLab-ITI/image-verification-corpus/tree/master/mediaeval2016
 - Source repository: MKLab-ITI/image-verification-corpus
 - Citation: Boididou, C., Papadopoulos, S., Zampoglou, M., Apostolidis, L., Papadopoulou, O., & Kompatsiaris, Y. (2018). Detection and visualization of misleading content on Twitter. International Journal of Multimedia Information Retrieval, 7(1), 71-86.
-- 认证依据: 源仓库说明 `mediaeval2015` 文件夹是 MediaEval Workshop 2015 的 Verifying Multimedia Use task 数据版本。
+- 认证依据: 实际使用的 Twitter 训练集 ID 来自源仓库 `mediaeval2016/devset/posts.txt`，测试集 ID 来自 `mediaeval2016/testset/posts_groundtruth.txt`；标签映射为 `real -> 0`、`fake -> 1`。
 
 ## Weibo
 

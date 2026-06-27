@@ -41,10 +41,11 @@ ycygl_MMN
 
 Twitter：
 
-- Dataset：MediaEval 2015 Verifying Multimedia Use
-- GitHub：https://github.com/MKLab-ITI/image-verification-corpus/tree/master/mediaeval2015
+- Dataset：MediaEval 2016 Verifying Multimedia Use
+- GitHub：https://github.com/MKLab-ITI/image-verification-corpus/tree/master/mediaeval2016
 - Source repository：MKLab-ITI/image-verification-corpus
 - Citation：Boididou, C., Papadopoulos, S., Zampoglou, M., Apostolidis, L., Papadopoulou, O., & Kompatsiaris, Y. (2018). Detection and visualization of misleading content on Twitter. International Journal of Multimedia Information Retrieval, 7(1), 71-86.
+- 划分来源：Twitter 训练集 ID 来自 `mediaeval2016/devset/posts.txt`，测试集 ID 来自 `mediaeval2016/testset/posts_groundtruth.txt`；标签映射为 `real -> 0`、`fake -> 1`。
 
 Weibo：
 
@@ -71,7 +72,7 @@ data_id
 data_id    split    label
 ```
 
-- `twitter_tvt_list.txt`：Twitter / MediaEval 2015 样本划分清单，沿用 Twitter 数据来源中的原始划分，包含 `train` 和 `test`。
+- `twitter_tvt_list.txt`：Twitter / MediaEval 2016 样本划分清单，沿用 Twitter 数据来源中的原始划分，包含 `train` 和 `test`。
 - `weibo_tvt_list.txt`：Weibo 样本划分清单，沿用 Weibo 数据来源中的原始划分，包含 `train`、`valid` 和 `test`。
 
 复现时，样本文件中的 `split` 字段应与对应 `data_id` 清单一致。
