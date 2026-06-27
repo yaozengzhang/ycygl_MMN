@@ -1,6 +1,3 @@
-# GCN + YCYGL Three-Feature Pipeline
-
-这个目录是独立重构版，不修改 `F:` 盘旧项目。
 
 ## 项目结构
 
