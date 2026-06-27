@@ -1,0 +1,185 @@
+# GCN + YCYGL Three-Feature Pipeline
+
+这个目录是独立重构版，不修改 `F:` 盘旧项目。
+
+## 项目结构
+
+```text
+E:\task1\gcn_ycygl_pipeline
+├── README.md
+├── requirements.txt
+├── run_pipeline.py
+├── data\
+│   └── README.md
+├── gcn_ycygl_pipeline\
+│   ├── __init__.py
+│   ├── config.py
+│   ├── prepare_dataset.py
+│   ├── textgcn_features.py
+│   ├── image_features.py
+│   ├── model.py
+│   └── train.py
+└── runs\
+    └── ...
+```
+
+- `data\`：只放数据来源、引用依据和后续 manifest 说明，不建议直接提交完整图片和特征文件。
+- `gcn_ycygl_pipeline\`：核心 Python 包，包含数据读取、GCN 特征生成、图像特征生成、模型和训练逻辑。
+- `runs\`：运行输出目录，保存中间特征、训练日志、模型权重和指标文件。
+- `run_pipeline.py`：总入口，按阶段串起 GCN 特征、图像/ELA 特征和三特征融合训练。
+- `requirements.txt`：最小依赖列表。
+
+## 数据来源
+
+Twitter：
+
+- Dataset：MediaEval 2015 Verifying Multimedia Use
+- GitHub：https://github.com/MKLab-ITI/image-verification-corpus/tree/master/mediaeval2015
+- Source repository：MKLab-ITI/image-verification-corpus
+- Citation：Boididou, C., Papadopoulos, S., Zampoglou, M., Apostolidis, L., Papadopoulou, O., & Kompatsiaris, Y. (2018). Detection and visualization of misleading content on Twitter. International Journal of Multimedia Information Retrieval, 7(1), 71-86.
+
+Weibo：
+
+- Dataset：Weibo multimodal rumor detection dataset
+- GitHub：https://github.com/wangzhuang1911/Weibo-dataset
+- Source repository：wangzhuang1911/Weibo-dataset
+- Citation：Jin, Z., Cao, J., Guo, H., Zhang, Y., & Luo, J. (2017). Multimodal Fusion with Recurrent Neural Networks for Rumor Detection on Microblogs. ACM Multimedia 2017, 795-816.
+
+`最终的含噪...` 目录不作为主实验输入。
+
+## 代码文件说明
+
+- `run_pipeline.py`：主流程脚本。读取数据配置，生成 `split.tsv`，按 `gcn`、`image`、`train` 三个阶段执行，也支持 `all` 一次跑完。
+- `gcn_ycygl_pipeline\config.py`：集中配置数据路径、默认输出目录和 wandb 默认参数。
+- `gcn_ycygl_pipeline\prepare_dataset.py`：读取样本文件，解析 `data_id`、文本、图片 id、标签和划分；同时提供简单分词、划分生成和 TextGCN 输入文件写出。
+- `gcn_ycygl_pipeline\textgcn_features.py`：构建 TextGCN 图，训练隐藏维度为 200 的 TextGCN，并把每个样本的 GCN200 特征保存为 `{data_id}.pt`。
+- `gcn_ycygl_pipeline\image_features.py`：从原图中提取 ResNet50 layer3 的 1024 维特征；同时生成 ELA 图并提取 ELA1024 特征。
+- `gcn_ycygl_pipeline\model.py`：定义三特征融合模型 `ThreeFeatureRumorModel` 和训练用的 `FocalLoss`。
+- `gcn_ycygl_pipeline\train.py`：读取三类 `.pt` 特征，训练融合检测模型，输出最优模型、训练日志和测试指标。
+- `gcn_ycygl_pipeline\__init__.py`：包初始化文件。
+
+## 流程
+
+```text
+样本文本 -> TextGCN -> GCN 200
+干净原图 -> ResNet50 layer3 -> 原图 1024
+干净原图 -> ELA -> ResNet50 layer3 -> ELA 1024
+GCN200 + 原图1024 + ELA1024 -> 三特征融合检测
+```
+
+## 数据准备
+
+代码默认读取下面四个位置。如果你的数据放在其他地方，先修改 `gcn_ycygl_pipeline\config.py` 里的 `DATA_ROOT` 或对应 `sample_dir`、`image_dir`。
+
+```text
+微博文本样本：F:\原电脑深度学习相关\多模态谣言检测数据\微博\ALL_textimage
+微博原图图片：F:\原电脑深度学习相关\多模态谣言检测数据\微博\ALL_pic
+
+推特文本样本：F:\原电脑深度学习相关\多模态谣言检测数据\推特\new_twitter_list
+推特原图图片：F:\原电脑深度学习相关\多模态谣言检测数据\推特\ALLPIL
+```
+
+样本文件需要能解析出：
+
+```text
+data_id
+text
+image_id
+label
+split
+```
+
+其中 `label` 支持 `0/1`、`real/fake`、`nonrumor/rumor` 这类写法；`split` 支持 `train`、`valid`、`test`。如果样本没有有效 split，代码会按比例生成划分。
+
+## 复现步骤
+
+先进入项目目录并安装依赖：
+
+```powershell
+cd E:\task1\gcn_ycygl_pipeline
+pip install -r requirements.txt
+```
+
+先跑小样本 smoke test，确认数据路径、图片读取、GCN、图像特征和训练流程都能通：
+
+```powershell
+python .\run_pipeline.py --dataset weibo --limit 32 --gcn_epochs 2 --epochs 2 --no_pmi
+```
+
+确认 smoke test 能跑通后，再跑完整微博：
+
+```powershell
+python .\run_pipeline.py --dataset weibo
+```
+
+完整推特：
+
+```powershell
+python .\run_pipeline.py --dataset twitter
+```
+
+也可以分阶段复现。推荐顺序是先生成 GCN200，再生成原图1024和 ELA1024，最后训练融合模型：
+
+```powershell
+python .\run_pipeline.py --dataset twitter --stages gcn
+python .\run_pipeline.py --dataset twitter --stages image
+python .\run_pipeline.py --dataset twitter --stages train
+```
+
+默认不会联网下载 ResNet50 权重。若本机允许下载或已有 torchvision 权重缓存，可以加：
+
+```powershell
+python .\run_pipeline.py --dataset twitter --image_pretrained
+```
+
+启用 wandb：
+
+```powershell
+python .\run_pipeline.py --dataset weibo --use_wandb --wandb_project gcn_ycygl_three_feature --wandb_entity your_entity
+```
+
+常用参数：
+
+```text
+--dataset           weibo 或 twitter
+--stages            gcn、image、train 或 all
+--limit             只取前 N 条样本，用于快速检查
+--overwrite         重新生成已有特征
+--device            cpu 或 cuda
+--gcn_epochs        TextGCN 训练轮数
+--gcn_hidden_dim    GCN 特征维度，默认 200
+--epochs            三特征融合模型训练轮数
+--batch_size        batch size
+--use_wandb         启用 wandb
+```
+
+输出默认在：
+
+```text
+E:\task1\gcn_ycygl_pipeline\runs\weibo
+E:\task1\gcn_ycygl_pipeline\runs\twitter
+```
+
+关键输出：
+
+```text
+gcn_features\{data_id}.pt
+image_features\{data_id}.pt
+ela_features\{data_id}.pt
+three_feature_train\best_three_feature_model.pt
+three_feature_train\training_log.csv
+three_feature_train\test_metrics.json
+```
+
+## 输出文件说明
+
+- `split.tsv`：本次运行使用的样本划分。
+- `data\text_dataset\{dataset}.txt`：TextGCN 使用的样本文本。
+- `data\text_dataset\clean_corpus\{dataset}.txt`：TextGCN 使用的分词文本。
+- `gcn_features\{data_id}.pt`：每个样本的 GCN200 特征。
+- `image_features\{data_id}.pt`：每个样本的原图 ResNet1024 特征。
+- `ela_features\{data_id}.pt`：每个样本的 ELA ResNet1024 特征。
+- `textgcn_model.pt`：TextGCN 权重。
+- `three_feature_train\best_three_feature_model.pt`：三特征融合模型最优权重。
+- `three_feature_train\training_log.csv`：每轮训练和验证指标。
+- `three_feature_train\test_metrics.json`：测试集指标。

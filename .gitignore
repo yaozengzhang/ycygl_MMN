@@ -1,0 +1,42 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Runtime outputs
+runs/
+outputs/
+checkpoints/
+logs/
+wandb/
+
+# Generated model/features
+*.pt
+*.pth
+*.ckpt
+*.npy
+*.npz
+
+# Local raw data and large media
+data/raw/
+data/images/
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.gif
+*.webp
+*.rar
+*.zip
+*.7z
+
+# Local editor/system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
