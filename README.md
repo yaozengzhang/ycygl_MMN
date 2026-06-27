@@ -76,8 +76,8 @@ data_id    split    label
 - `gcn_ycygl_pipeline\prepare_dataset.py`：读取样本文件，解析 `data_id`、文本、图片 id、标签和划分；同时提供简单分词、划分生成和 TextGCN 输入文件写出。
 - `gcn_ycygl_pipeline\textgcn_features.py`：构建 TextGCN 图，训练隐藏维度为 200 的 TextGCN，并把每个样本的 GCN200 特征保存为 `{data_id}.pt`。
 - `gcn_ycygl_pipeline\image_features.py`：从原图中提取 ResNet50 layer3 的 1024 维特征；同时生成 ELA 图并提取 ELA1024 特征。
-- `gcn_ycygl_pipeline\model.py`：定义三特征融合模型 `ThreeFeatureRumorModel`。
-- `gcn_ycygl_pipeline\train.py`：读取三类 `.pt` 特征，使用 `BCEWithLogitsLoss` 训练融合检测模型，输出最优模型、训练日志和测试指标。
+- `gcn_ycygl_pipeline\model.py`：按特征投影、注意力融合、分类头组织三特征融合模型 `ThreeFeatureRumorModel`。
+- `gcn_ycygl_pipeline\train.py`：按参数解析、随机种子、Dataset/DataLoader、模型准备、`train_epoch`、`eval_epoch`、`test_epoch`、训练主循环和入口函数组织训练流程，使用 `BCEWithLogitsLoss` 训练融合检测模型。
 - `gcn_ycygl_pipeline\__init__.py`：包初始化文件。
 
 ## 流程
