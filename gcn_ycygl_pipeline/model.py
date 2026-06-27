@@ -40,15 +40,3 @@ class ThreeFeatureRumorModel(nn.Module):
         fused = self.norm(tokens + attended).mean(dim=1)
         return self.classifier(fused).squeeze(-1)
 
-
-class FocalLoss(nn.Module):
-    def __init__(self, alpha: float = 0.25, gamma: float = 2.0):
-        super().__init__()
-        self.alpha = alpha
-        self.gamma = gamma
-
-    def forward(self, logits: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-        bce = nn.functional.binary_cross_entropy_with_logits(logits, target.float(), reduction="none")
-        pt = torch.exp(-bce)
-        return (self.alpha * (1 - pt) ** self.gamma * bce).mean()
-

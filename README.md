@@ -23,7 +23,7 @@ ycygl_MMN
     └── ...
 ```
 
-- `data\`：只放数据来源、引用依据和后续 manifest 说明，不建议直接提交完整图片和特征文件。
+- `data\`：保存数据来源、引用依据和复现数据结构说明，不提交完整图片和特征文件。
 - `gcn_ycygl_pipeline\`：核心 Python 包，包含数据读取、GCN 特征生成、图像特征生成、模型和训练逻辑。
 - `runs\`：运行输出目录，保存中间特征、训练日志、模型权重和指标文件。
 - `run_pipeline.py`：总入口，按阶段串起 GCN 特征、图像/ELA 特征和三特征融合训练。
@@ -54,8 +54,8 @@ Weibo：
 - `gcn_ycygl_pipeline\prepare_dataset.py`：读取样本文件，解析 `data_id`、文本、图片 id、标签和划分；同时提供简单分词、划分生成和 TextGCN 输入文件写出。
 - `gcn_ycygl_pipeline\textgcn_features.py`：构建 TextGCN 图，训练隐藏维度为 200 的 TextGCN，并把每个样本的 GCN200 特征保存为 `{data_id}.pt`。
 - `gcn_ycygl_pipeline\image_features.py`：从原图中提取 ResNet50 layer3 的 1024 维特征；同时生成 ELA 图并提取 ELA1024 特征。
-- `gcn_ycygl_pipeline\model.py`：定义三特征融合模型 `ThreeFeatureRumorModel` 和训练用的 `FocalLoss`。
-- `gcn_ycygl_pipeline\train.py`：读取三类 `.pt` 特征，训练融合检测模型，输出最优模型、训练日志和测试指标。
+- `gcn_ycygl_pipeline\model.py`：定义三特征融合模型 `ThreeFeatureRumorModel`。
+- `gcn_ycygl_pipeline\train.py`：读取三类 `.pt` 特征，使用 `BCEWithLogitsLoss` 训练融合检测模型，输出最优模型、训练日志和测试指标。
 - `gcn_ycygl_pipeline\__init__.py`：包初始化文件。
 
 ## 流程
@@ -65,11 +65,12 @@ Weibo：
 干净原图 -> ResNet50 layer3 -> 原图 1024
 干净原图 -> ELA -> ResNet50 layer3 -> ELA 1024
 GCN200 + 原图1024 + ELA1024 -> 三特征融合检测
+训练损失函数 -> BCEWithLogitsLoss
 ```
 
 ## 数据准备
 
-代码默认从 `data/raw` 读取数据，也可以通过环境变量 `YCYGL_DATA_ROOT` 指定数据根目录。推荐整理成下面的相对结构：
+代码默认从 `data/raw` 读取数据，也可以通过环境变量 `YCYGL_DATA_ROOT` 指定数据根目录。数据目录结构如下：
 
 ```text
 data/raw/
@@ -103,7 +104,7 @@ label
 split
 ```
 
-其中 `label` 支持 `0/1`、`real/fake`、`nonrumor/rumor` 这类写法；`split` 支持 `train`、`valid`、`test`。如果样本没有有效 split，代码会按比例生成划分。
+其中 `label` 支持 `0/1`、`real/fake`、`nonrumor/rumor` 这类写法；`split` 使用引用数据集提供的训练集、验证集和测试集划分，支持 `train`、`valid`、`test`。
 
 ## 复现步骤
 
@@ -132,7 +133,7 @@ python .\run_pipeline.py --dataset weibo
 python .\run_pipeline.py --dataset twitter
 ```
 
-也可以分阶段复现。推荐顺序是先生成 GCN200，再生成原图1024和 ELA1024，最后训练融合模型：
+也可以分阶段复现。顺序是先生成 GCN200，再生成原图1024和 ELA1024，最后训练融合模型：
 
 ```powershell
 python .\run_pipeline.py --dataset twitter --stages gcn

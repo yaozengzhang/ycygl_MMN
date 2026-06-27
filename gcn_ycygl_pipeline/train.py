@@ -11,7 +11,7 @@ from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_sc
 from torch.utils.data import DataLoader, Dataset
 
 from .config import DATASETS, DEFAULT_WORK_DIR
-from .model import FocalLoss, ThreeFeatureRumorModel
+from .model import ThreeFeatureRumorModel
 from .prepare_dataset import Sample, load_samples, make_split
 
 
@@ -143,7 +143,7 @@ def train_three_feature_model(
     test_loader = build_loader(test_samples, gcn_dir, image_dir, ela_dir, batch_size, False)
 
     model = ThreeFeatureRumorModel(hidden_dim=hidden_dim, num_heads=num_heads, dropout=dropout).to(device_obj)
-    loss_fn = FocalLoss()
+    loss_fn = torch.nn.BCEWithLogitsLoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
     best_state = None
@@ -256,4 +256,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import random
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -105,26 +104,9 @@ def make_split(
     samples = list(samples)
     if samples and all(sample.split is not None for sample in samples):
         return {sample.data_id: sample.split or "train" for sample in samples}
-
-    by_label: dict[int, list[str]] = {}
-    for sample in samples:
-        by_label.setdefault(sample.label, []).append(sample.data_id)
-
-    rng = random.Random(seed)
-    split: dict[str, str] = {}
-    for ids in by_label.values():
-        ids = ids[:]
-        rng.shuffle(ids)
-        n = len(ids)
-        train_end = int(n * train_ratio)
-        valid_end = train_end + int(n * valid_ratio)
-        for data_id in ids[:train_end]:
-            split[data_id] = "train"
-        for data_id in ids[train_end:valid_end]:
-            split[data_id] = "valid"
-        for data_id in ids[valid_end:]:
-            split[data_id] = "test"
-    return split
+    missing = [sample.data_id for sample in samples if sample.split is None]
+    preview = ", ".join(missing[:10])
+    raise ValueError(f"Samples must include dataset-provided split labels. Missing split for: {preview}")
 
 
 def write_textgcn_files(samples: list[Sample], split: dict[str, str], out_dir: Path, dataset: str) -> None:
