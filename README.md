@@ -57,7 +57,7 @@ Weibo：
 
 ## 数据划分清单
 
-`data_id\` 中保存训练、验证、测试划分清单，划分按照对应数据来源整理。
+`data_id\` 中保存训练、验证、测试划分清单，划分沿用 `数据来源` 中对应原始数据集的划分定义。
 
 ```text
 data_id
@@ -71,8 +71,8 @@ data_id
 data_id    split    label
 ```
 
-- `twitter_tvt_list.txt`：Twitter / MediaEval 2015 样本划分清单，包含 `train` 和 `test`。
-- `weibo_tvt_list.txt`：Weibo 样本划分清单，包含 `train`、`valid` 和 `test`。
+- `twitter_tvt_list.txt`：Twitter / MediaEval 2015 样本划分清单，沿用 Twitter 数据来源中的原始划分，包含 `train` 和 `test`。
+- `weibo_tvt_list.txt`：Weibo 样本划分清单，沿用 Weibo 数据来源中的原始划分，包含 `train`、`valid` 和 `test`。
 
 复现时，样本文件中的 `split` 字段应与对应 `data_id` 清单一致。
 
