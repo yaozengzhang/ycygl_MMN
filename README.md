@@ -8,6 +8,9 @@ ycygl_MMN
 ├── run_pipeline.py
 ├── data\
 │   └── README.md
+├── data_id\
+│   ├── twitter_tvt_list.txt
+│   └── weibo_tvt_list.txt
 ├── gcn_ycygl_pipeline\
 │   ├── __init__.py
 │   ├── config.py
@@ -21,6 +24,7 @@ ycygl_MMN
 ```
 
 - `data\`：保存数据来源、引用依据和复现数据结构说明，不提交完整图片和特征文件。
+- `data_id\`：保存按照引用数据集来源划分整理的样本 id 清单。
 - `gcn_ycygl_pipeline\`：核心 Python 包，包含数据读取、GCN 特征生成、图像特征生成、模型和训练逻辑。
 - `runs\`：运行输出目录，保存中间特征、训练日志、模型权重和指标文件。
 - `run_pipeline.py`：总入口，按阶段串起 GCN 特征、图像/ELA 特征和三特征融合训练。
@@ -43,6 +47,28 @@ Weibo：
 - Citation：Jin, Z., Cao, J., Guo, H., Zhang, Y., & Luo, J. (2017). Multimodal Fusion with Recurrent Neural Networks for Rumor Detection on Microblogs. ACM Multimedia 2017, 795-816.
 
 去除空文本、无意义文本、没有图片引用的数据，实际使用的数据可能和清洗过程有关，数量可能存在差异。
+
+## 数据划分清单
+
+`data_id\` 中保存训练、验证、测试划分清单，划分按照对应数据来源整理。
+
+```text
+data_id
+├── twitter_tvt_list.txt
+└── weibo_tvt_list.txt
+```
+
+每行格式：
+
+```text
+data_id    split    label
+```
+
+- `twitter_tvt_list.txt`：Twitter / MediaEval 2015 样本划分清单，包含 `train` 和 `test`。
+- `weibo_tvt_list.txt`：Weibo 样本划分清单，包含 `train`、`valid` 和 `test`。
+
+复现时，样本文件中的 `split` 字段应与对应 `data_id` 清单一致。
+
 ## 代码文件说明
 
 - `run_pipeline.py`：主流程脚本。读取数据配置，生成 `split.tsv`，按 `gcn`、`image`、`train` 三个阶段执行，也支持 `all` 一次跑完。
